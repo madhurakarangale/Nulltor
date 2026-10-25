@@ -1,0 +1,277 @@
+import React from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useAuthStore } from '../../store/authStore';
+import { useTheme } from '../../context/ThemeContext';
+import { NulltorLogo } from './NulltorLogo';
+import { Folder, FileText, Shield, User, Settings, LogOut, Sun, Moon } from 'lucide-react';
+
+export function Sidebar() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { user, logout } = useAuthStore();
+  const { theme, toggleTheme } = useTheme();
+
+  function handleLogout() {
+    logout();
+    navigate('/login');
+  }
+
+  const initials = user?.username?.slice(0, 2).toUpperCase() ?? '??';
+
+  return (
+    <aside
+      className="sidebar"
+      style={{
+        width: '240px',
+        height: '100vh',
+        background: 'var(--bg-1)',
+        backdropFilter: 'blur(16px)',
+        WebkitBackdropFilter: 'blur(16px)',
+        borderRight: '1px solid var(--border)',
+        display: 'flex',
+        flexDirection: 'column',
+        flexShrink: 0,
+        zIndex: 20,
+        boxShadow: 'var(--shadow)',
+      }}
+    >
+      {/* Top Header Logo */}
+      <div
+        style={{
+          height: '56px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          padding: '0 18px',
+          borderBottom: '1px solid var(--border)',
+        }}
+      >
+        <NulltorLogo size="md" />
+        <span
+          style={{
+            fontSize: '10px',
+            fontWeight: 700,
+            padding: '2px 6px',
+            borderRadius: '4px',
+            background: 'rgba(16, 185, 129, 0.1)',
+            color: '#10b981',
+            border: '1px solid rgba(16, 185, 129, 0.25)',
+          }}
+        >
+          v5.5
+        </span>
+      </div>
+
+      {/* Main Navigation Links */}
+      <nav style={{ display: 'flex', flexDirection: 'column', gap: '4px', padding: '16px 12px', flex: 1 }}>
+        <NavItem
+          href="/dashboard"
+          label="Workspaces"
+          currentPath={location.pathname}
+          icon={<Folder size={16} />}
+        />
+        <NavItem
+          href="/logs"
+          label="Audit Telemetry"
+          currentPath={location.pathname}
+          icon={<FileText size={16} />}
+        />
+        <NavItem
+          href="/users"
+          label="Governance & Team"
+          currentPath={location.pathname}
+          icon={<Shield size={16} />}
+        />
+        <NavItem
+          href="/profile"
+          label="My Profile"
+          currentPath={location.pathname}
+          icon={<User size={16} />}
+        />
+        <NavItem
+          href="/settings"
+          label="Settings"
+          currentPath={location.pathname}
+          icon={<Settings size={16} />}
+        />
+      </nav>
+
+      {/* Bottom User Footer Card */}
+      <div
+        style={{
+          padding: '12px 14px',
+          borderTop: '1px solid var(--border)',
+          background: 'var(--bg-2)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: '8px',
+        }}
+      >
+        <div
+          onClick={() => navigate('/profile')}
+          title="View User Profile"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px',
+            cursor: 'pointer',
+            flex: 1,
+            overflow: 'hidden',
+            padding: '4px 6px',
+            borderRadius: '8px',
+            transition: 'background 0.15s ease',
+          }}
+          onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--bg-3)')}
+          onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+        >
+          <div
+            style={{
+              width: '34px',
+              height: '34px',
+              borderRadius: '8px',
+              background: 'linear-gradient(135deg, #2563eb, #7c3aed)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontWeight: 800,
+              fontSize: '12.5px',
+              color: '#ffffff',
+              flexShrink: 0,
+              boxShadow: '0 2px 8px rgba(37, 99, 235, 0.3)',
+            }}
+          >
+            {initials}
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden', lineHeight: 1.2 }}>
+            <span
+              style={{
+                fontSize: '13px',
+                fontWeight: 700,
+                color: 'var(--text-primary)',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {user?.username || 'Architect'}
+            </span>
+            <span
+              style={{
+                fontSize: '10.5px',
+                fontWeight: 700,
+                color: '#3b82f6',
+                textTransform: 'uppercase',
+                letterSpacing: '0.04em',
+              }}
+            >
+              {user?.role}
+            </span>
+          </div>
+        </div>
+
+        {/* Quick Action Buttons */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+          <button
+            className="theme-toggle-btn icon-btn-bounce"
+            onClick={(e) => toggleTheme(e)}
+            title={`Switch to ${theme === 'dark' ? 'Light' : 'Dark'} Mode`}
+            style={{
+              width: '28px',
+              height: '28px',
+              borderRadius: '6px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: 'var(--text-secondary)',
+              background: 'transparent',
+              border: 'none',
+              cursor: 'pointer',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = 'var(--bg-3)';
+              e.currentTarget.style.color = 'var(--text-primary)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'transparent';
+              e.currentTarget.style.color = 'var(--text-secondary)';
+            }}
+          >
+            <span className={`theme-icon-wrapper ${theme === 'dark' ? 'is-dark' : 'is-light'}`}>
+              {theme === 'dark' ? <Sun size={14} /> : <Moon size={14} />}
+            </span>
+          </button>
+
+          <button
+            onClick={handleLogout}
+            title="Sign out"
+            style={{
+              width: '28px',
+              height: '28px',
+              borderRadius: '6px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: '#ef4444',
+              background: 'transparent',
+              border: 'none',
+              cursor: 'pointer',
+              transition: 'all 0.15s ease',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = 'rgba(239, 68, 68, 0.15)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'transparent';
+            }}
+          >
+            <LogOut size={13} />
+          </button>
+        </div>
+      </div>
+    </aside>
+  );
+}
+
+function NavItem({ href, label, icon, currentPath }: { href: string; label: string; icon: React.ReactNode; currentPath: string }) {
+  const navigate = useNavigate();
+  const active = currentPath === href || (href !== '/' && currentPath.startsWith(href));
+  return (
+    <button
+      onClick={() => navigate(href)}
+      style={{
+        width: '100%',
+        textAlign: 'left',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '12px',
+        padding: '9px 12px',
+        borderRadius: '8px',
+        fontSize: '13px',
+        fontWeight: active ? 600 : 500,
+        color: active ? 'var(--text-primary)' : 'var(--text-secondary)',
+        background: active ? 'var(--bg-3)' : 'transparent',
+        border: '1px solid transparent',
+        transition: 'all 0.15s ease',
+        cursor: 'pointer',
+      }}
+      onMouseEnter={(e) => {
+        if (!active) {
+          e.currentTarget.style.background = 'var(--bg-2)';
+          e.currentTarget.style.color = 'var(--text-primary)';
+        }
+      }}
+      onMouseLeave={(e) => {
+        if (!active) {
+          e.currentTarget.style.background = 'transparent';
+          e.currentTarget.style.color = 'var(--text-secondary)';
+        }
+      }}
+    >
+      <span style={{ color: active ? 'var(--text-primary)' : 'inherit', display: 'flex', alignItems: 'center' }}>
+        {icon}
+      </span>
+      <span>{label}</span>
+    </button>
+  );
+}
